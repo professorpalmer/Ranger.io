@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>fSTR2 Calculator</title>
+</head>
+<body>
+	<h1>fSTR2 Calculator</h1>
+	<p>Take the Damage Value of your weapon, ammo, and the average damage of your standard ranged attack damage on an enemy.</p>
+	<p>Plug the values in to see your fSTR(2) value against that enemy.</p>
+	<form>
+		<label for="bowStat">Bow/Gun Damage Stat:</label>
+		<input type="number" id="bowStat" name="bowStat"><br><br>
+
+		<label for="ammoStat">Ammo Damage Stat:</label>
+		<input type="number" id="ammoStat" name="ammoStat"><br><br>
+
+		<label for="rangedAttack">Damage of Ranged Attack:</label>
+		<input type="number" id="rangedAttack" name="rangedAttack"><br><br>
+
+		<button type="button" onclick="calculate()">Calculate</button>
+
+		<p>fSTR2 works in a tier system. Compare your result to the table below. To move up or down a tier you will need to add STR</p>
+		<p>The most simple way to determine whether your need 2 or 3 STR at a time to increase 1 fSTR2 point is to compare your total STR to your Job Level</p>
+		<p>If total STR is higher than job level, it's safest to assume 3 STR at a time is required. If STR is below job level, it's safest to assume 2 STR at a time is required.</p>
+		<br>
+		<img src="https://i.imgur.com/0Aumi5C.png" alt="fSTR2 Approximation Table">
+	</form>
+	<p id="result"></p>
+	<script>
+		function calculate() {
+			let bowStat = parseFloat(document.getElementById("bowStat").value);
+			let ammoStat = parseFloat(document.getElementById("ammoStat").value);
+			let rangedAttack = parseFloat(document.getElementById("rangedAttack").value);
+
+			let fSTR2 = rangedAttack - (bowStat + ammoStat);
+
+			document.getElementById("result").innerHTML = "fSTR2 = " + fSTR2;
+		}
+	</script>
+</body>
+</html>

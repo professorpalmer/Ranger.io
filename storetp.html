@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Store TP Calculator</title>
+    <link rel="stylesheet" href="main.css">
+    <script language="javascript" type="text/javascript">
+    <!--
+    	// Notes for future enhancements, whenever I feel like it:
+    	// - Include Dual Wield effects.
+    	
+        // Computes the TP/hit based on the indicated delay. Note
+        // that the delay must be the cumulative delay (i.e. ranged
+        // delay is weapon delay + ammo delay).
+        function computeTPGain(delay)
+        {
+            var tpGain = 0;
+            
+            // If the formulas didn't use such different constants,
+            // well, this would be a lot shorter.
+            if(delay >= 0 && delay <= 180) {
+                tpGain = 5.0 + ((delay - 180.0) * 1.5 / 180.0);
+            }
+            else if(delay >= 181 && delay <= 450) {
+                tpGain = 5.0 + ((delay - 180.0) * 6.5 / 270.0);
+            }
+            else if(delay >= 451 && delay <= 480) {
+                tpGain = 11.5 + ((delay - 450.0) * 1.5 / 30.0);
+            }
+            else if(delay >= 481 && delay <= 530) {
+                tpGain = 13.0 + ((delay - 480.0) * 1.5 / 50.0);
+            }
+            else if(delay >= 531 && delay <= 1050) {
+                tpGain = 14.5 + ((delay - 530.0) * 3.5 / 470.0);
+            }
+            
+            // Truncate to 1 decimal place
+            tpGain = Math.floor(tpGain * 10.0) / 10.0;
+            
+            return tpGain;
+        }
+        
+        // Computes amount of required Store TP bonus in order
+        // to gain 100% TP in the requested number of hits.
+        function computeStoreTP(tpGain, hitCount)
+        {
+            var reqTP, storeTP;
+            
+            reqTP = 100.0 / hitCount;
+            
+            storeTP = Math.round(((reqTP / tpGain) - 1) * 100.0);
+            
+            return storeTP;
+        }
+        
+        // Event handler for the main button on the form; computes Store TP bonus
+        // and presents it all nice like.
+        function handleButton()
+        {
+            var totDelay;
+            var ammoDelay, weapDelay, hitCount;
+            var tpGain, storeTP;
+            
+            ammoDelay = document.calcForm.txtAmmoDelay.value;
+            weapDelay = document.calcForm.txtDelay.value;
+            hitCount = document.calcForm.txtHitCount.value;
+            
+            // Sanity check
+            if(weapDelay.length == 0 || hitCount.length == 0) {
+                alert("You must fill in both the weapon delay and number of hits.");
+                return;
+            }
+            
+            // Figure out the total delay.
+            if(ammoDelay.length > 0) {
+                totDelay = Math.floor(parseFloat(ammoDelay) + parseFloat(weapDelay));
+            }
+            else {
+                totDelay = parseFloat(weapDelay);
+            }
+            
+            // Note we accept only nonzero delay, even though the equations show that
+            // zero delay is perfectly acceptable.
+            if(totDelay <= 0.0) {
+	            alert("Delay must be greater than zero.");
+	            return;
+            }
+            
+            tpGain = computeTPGain(totDelay);
+            
+            numHits = parseInt(hitCount);
+            
+            if(numHits > 0.0) {
+	            storeTP = computeStoreTP(tpGain, parseInt(hitCount));
+	            
+	            if(storeTP >= 0) {
+	            	alert("You will need Store TP+" + storeTP + " in order to get 100% in " + hitCount + " hits.");
+	    		}
+	    		else {
+		    		alert("You do not need any additional Store TP to attain this.");	
+	    		}
+			}
+			else {
+				alert("The number of hits must be greater than zero.");	
+			}
+        }
+    // -->
+    </script>
+</head>
+</div>
+<div id="bodytext">
+<p class="pagetitle">Store TP Calculator</p>
+
+<p style="text-align: center;">
+<form name="calcForm">
+<p>
+My weapon has a delay rating of <input type="text" name="txtDelay"><br>
+(It's also ranged, and the ammo has a delay rating of <input type="text" name="txtAmmoDelay">*) <br>
+I want 100% in <input type="text" name="txtHitCount"> hits.<br><br>
+<input type="button" name="cmdCalc" onclick="handleButton();" value="How much Store TP do I need?">
+</p>
+</form> 
+</div>
+</div>
+</body>
+</html>
