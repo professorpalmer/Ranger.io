@@ -1,51 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>FFXI Ranged Accuracy Food Calculator</title>
+    <title>FFXI Ranged Accuracy Food Calculator</title>
 </head>
 <body>
-	<h1>FFXI Ranged Accuracy Food Calculator</h1>
-	<form>
-		<label for="skill-level">Enter Skill Level: </label>
-		<input type="number" id="skill-level" name="skill-level" required>
-		<button type="submit">Submit</button>
-	</form>
-	<p id="result"></p>
+    <h1>FFXI Ranged Accuracy Food Calculator</h1>
+    <form>
+        <label for="skill-level">Enter Skill Level: </label>
+        <input type="number" id="skill-level" name="skill-level" required>
+        <br><br>
+        <button type="button" onclick="findAccuracyFood()">Find Food</button>
+    </form>
+    <p id="result"></p>
 
-	<script>
-		const foods = {
-			0: "Vegetable Gruel (Agility +2, HP Recovered While Healing +4, Vitality | 3 hours, +15% Ranged Accuracy)",
-			67: "Tentacle Sushi (HP +20, Dexterity +3, Agility +3, Mind -1, Double Attack +1% | 30 minutes, +20% Accuracy, +20% Ranged Accuracy)",
-			200: "Sunset Soup (Agility +3, HP Recovered While Healing +9, Vitality | 4 hours, +9% Ranged Accuracy)",
-			230: "Sole Sushi (HP +20, Strength +5, Dexterity +6, Resist Sleep +1 | 30 minutes, +15% Accuracy, +15% Ranged Accuracy)"
-		};
+    <script>
+        const foods = [
+            { level: 0, description: "Jack O' Lantern (Charisma -10, Accuracy +10, Ranged Accuracy +10, Evasion +10, Arcana Killer +4 (5% activation rate), Resistance to Dark +25 | 3 hours)" },
+            { level: 38, description: "Vegetable Gruel (Agility +2, HP Recovered While Healing +4, Vitality | 3 hours, +15% Ranged Accuracy)" },
+            { level: 67, description: "Tentacle Sushi (HP +20, Dexterity +3, Agility +3, Mind -1, Double Attack +1% | 30 minutes, +20% Accuracy, +20% Ranged Accuracy)" },
+            { level: 200, description: "Sunset Soup (Agility +3, HP Recovered While Healing +9, Vitality | 4 hours, +9% Ranged Accuracy)" },
+            { level: 230, description: "Sole Sushi (HP +20, Strength +5, Dexterity +6, Resist Sleep +1 | 30 minutes, +15% Accuracy, +15% Ranged Accuracy)" }
+        ];
 
-		const form = document.querySelector("form");
-		const result = document.querySelector("#result");
+        function findAccuracyFood() {
+            const skillLevelInput = document.getElementById("skill-level");
+            if (!skillLevelInput.value) {
+                document.getElementById("result").textContent = "Please enter a skill level!";
+                return;
+            }
 
-		form.addEventListener("submit", (event) => {
-			event.preventDefault();
-			const skillLevel = parseInt(document.querySelector("#skill-level").value);
-			let food = null;
+            const skillLevel = parseInt(skillLevelInput.value);
+            let food = null;
 
-			for (const level in foods) {
-				if (skillLevel >= parseInt(level)) {
-					food = foods[level];
-				} else {
-					break;
-				}
-			}
+            for (const entry of foods) {
+                if (skillLevel >= entry.level) {
+                    food = entry.description;
+                } else {
+                    break;
+                }
+            }
 
-			if (food) {
-				const message = `For skill level ${skillLevel}, the recommended food is ${food}.`;
-				result.textContent = message;
-			} else {
-				result.textContent = "Invalid skill level entered!";
-			}
-		});
-	</script>
+            if (food) {
+                const message = `For skill level ${skillLevel}, the recommended food is ${food}.`;
+                document.getElementById("result").textContent = message;
+            } else {
+                document.getElementById("result").textContent = "Invalid skill level entered!";
+            }
+        }
+    </script>
 </body>
 </html>
+
+
+
+
+
+
 
 
 <!DOCTYPE html>
@@ -63,14 +73,14 @@
         <br><br>
         <div id="food-result"></div>
     </form>
-    
+
     <script>
         function findFood() {
             const skillLevel = parseInt(document.getElementById("skill-level-input").value);
             let foodName = "";
             let foodStats = "";
             let foodDuration = "";
-            
+
             if (skillLevel >= 0 && skillLevel <= 66) {
                 foodName = "Rarab Meatball";
                 foodStats = "HP +10, Strength +2, Vitality +2, Intelligence -1 | Ranged Attack +30%, Attack +30%";
@@ -94,7 +104,7 @@
             } else {
                 foodName = "Invalid Skill Level";
             }
-            
+
             document.getElementById("food-result").textContent = `For Skill Level ${skillLevel}, the recommended food is: ${foodName} (${foodStats} | ${foodDuration})`;
         }
     </script>
