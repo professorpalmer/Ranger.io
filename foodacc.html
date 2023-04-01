@@ -7,7 +7,10 @@
     <h2>Not sure how to use?</h2>
    <p>Target yourself and /checkparam to get your Ranged Accuracy and Attack values! Input them into the fields below and get your statistically ideal* food for your skill level!</p>
     <h3>FFXI Ranged Accuracy Food Calculator</h3>
-    <form>
+		<form>
+    <label for="exclude-long-duration-accuracy">Exclude 3-hour food: </label>
+    <input type="checkbox" id="exclude-long-duration-accuracy" name="exclude-long-duration-accuracy">
+        <br><br>
         <label for="skill-level">Enter Skill Level: </label>
         <input type="number" id="skill-level" name="skill-level" required>
         <br><br>
@@ -17,14 +20,17 @@
 
     <script>
         const foods = [
-            { level: 0, description: "Jack O' Lantern (Charisma -10, Accuracy +10, Ranged Accuracy +10, Evasion +10, Arcana Killer +4 (5% activation rate), Resistance to Dark +25 | 3 hours)" },
-            { level: 38, description: "Flounder Meuniere (Dexterity +6, Mind -1, Ranged Accuracy +15, Ranged Attack +14%, Enmity -3 | 3 hours)" },
-            { level: 74, description: "Tentacle Sushi (HP +20, Dexterity +3, Agility +3, Mind -1, Double Attack +1% | 30 minutes, +20% Accuracy, +20% Ranged Accuracy)" },
-            { level: 175, description: "Sole Sushi (HP +20, Strength +5, Dexterity +6, Resist Sleep +1 | 30 minutes, +15% Accuracy, +15% Ranged Accuracy)" }
+            { level: 0, duration: 180, description: "Jack O' Lantern (Charisma -10, Accuracy +10, Ranged Accuracy +10, Evasion +10, Arcana Killer +4 (5% activation rate), Resistance to Dark +25 | 3 hours)" },
+            { level: 0, duration: 30, description: "Salmon Sub (Dexterity +2, Vitality +1, Agility +1, Intelligence +2, Mind -2, Ranged Accuracy +2 | 30 minutes)" },
+            { level: 38, duration: 180, description: "Flounder Meuniere (Dexterity +6, Mind -1, Ranged Accuracy +15, Ranged Attack +14%, Enmity -3 | 3 hours)" },
+            { level: 38, duration: 30, description: "Windurst Taco (MP +20, Vitality -1, Agility +5, Ranged Accuracy +8% (Max. 10), Ranged Attack +1, MP Recovered While Healing +1 | 30 minutes)" },
+            { level: 74, duration: 30, description: "Tentacle Sushi (HP +20, Dexterity +3, Agility +3, Mind -1, Double Attack +1% | 30 minutes, +20% Accuracy, +20% Ranged Accuracy)" },
+            { level: 175, duration: 30, description: "Sole Sushi (HP +20, Strength +5, Dexterity +6, Resist Sleep +1 | 30 minutes, +15% Accuracy, +15% Ranged Accuracy)" }
         ];
 
         function findAccuracyFood() {
             const skillLevelInput = document.getElementById("skill-level");
+            const excludeLongDuration = document.getElementById("exclude-long-duration-accuracy").checked;
             if (!skillLevelInput.value) {
                 document.getElementById("result").textContent = "Please enter a skill level!";
                 return;
@@ -34,84 +40,96 @@
             let food = null;
 
             for (const entry of foods) {
-                if (skillLevel >= entry.level) {
+                if (skillLevel >= entry.level && (excludeLongDuration ? entry.duration === 30 : entry.duration === 180)) {
                     food = entry.description;
-                } else {
-                    break;
                 }
             }
 
             if (food) {
                 const message = `For skill level ${skillLevel}, the recommended food is ${food}.`;
                 document.getElementById("result").textContent = message;
-            } else {
-                document.getElementById("result").textContent = "Invalid skill level entered!";
-            }
-        }
-    </script>
-</body>
-</html>
+              } else {
+                  document.getElementById("result").textContent = "Invalid skill level entered!";
+              }
+          }
+      </script>
+  </body>
+  </html>
 
 
 
 
 
+  <!DOCTYPE html>
+  <html>
+  <head>
+      <title>FFXI Ranged Attack Food Calculator</title>
+  </head>
+  <body>
+      <h3>FFXI Ranged Attack Food Calculator</h3>
+      <form>
+				<form>
+	<label for="exclude-long-duration-attack">Exclude 3-hour food: </label>
+	<input type="checkbox" id="exclude-long-duration-attack" name="exclude-long-duration-attack">
+          <br><br>
+          <label for="skill-level-input">Enter Skill Level:</label>
+          <input type="number" id="skill-level-input" name="skill-level">
+          <br><br>
+          <button type="button" onclick="findFood()">Find Food</button>
+          <br><br>
+          <div id="food-result"></div>
+      </form>
 
+      <script>
+          function findFood() {
+              const skillLevel = parseInt(document.getElementById("skill-level-input").value);
+              const excludeLongDuration = document.getElementById("exclude-long-duration-attack").checked;
+              let foodName = "";
+              let foodStats = "";
+              let foodDuration = "";
 
-
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>FFXI Ranged Attack Food Calculator</title>
-</head>
-<body>
-    <h3>FFXI Ranged Attack Food Calculator</h3>
-    <form>
-        <label for="skill-level-input">Enter Skill Level:</label>
-        <input type="number" id="skill-level-input" name="skill-level">
-        <br><br>
-        <button type="button" onclick="findFood()">Find Food</button>
-        <br><br>
-        <div id="food-result"></div>
-    </form>
-
-    <script>
-        function findFood() {
-            const skillLevel = parseInt(document.getElementById("skill-level-input").value);
-            let foodName = "";
-            let foodStats = "";
-            let foodDuration = "";
-
-            if (skillLevel >= 0 && skillLevel <= 66) {
-                foodName = "Rarab Meatball";
-                foodStats = "HP +10, Strength +2, Vitality +2, Intelligence -1 | Ranged Attack +30%, Attack +30%";
-                foodDuration = "3 hours";
-            } else if (skillLevel >= 67 && skillLevel <= 112) {
-                foodName = "Navarin";
-                foodStats = "HP +3% (Max. 130), Strength +3, Vitality +1, Agility +1, Intelligence -1 | Ranged Attack +27%, Attack +27%";
-                foodDuration = "3 hours";
-            } else if (skillLevel >= 113 && skillLevel <= 185) {
-                foodName = "Dhalmel Pie";
-                foodStats = "HP +25, Strength +4, Vitality +1, Agility +2, Intelligence -2, Mind +1 | Ranged Attack +25%, Attack +25%";
-                foodDuration = "30 minutes";
-            } else if (skillLevel >= 186 && skillLevel <= 272) {
-                foodName = "Boiled Cockatrice";
-                foodStats = "Strength +5, Agility +2, Intelligence -2, Mind +1, Resist Petrify | Ranged Attack +22%, Attack +22%";
-                foodDuration = "180 minutes";
-            } else if (skillLevel >= 273 && skillLevel <= 375) {
-                foodName = "Coeurl Sub";
-                foodStats = "MP +10, Strength +5, Agility +1, Intelligence -2, HP Regeneration While Healing +1, Resist Stun, Resist Sleep | Ranged Attack +20%, Attack +20%";
-                foodDuration = "30 minutes";
-            } else {
-                foodName = "Invalid Skill Level";
-            }
-
-            document.getElementById("food-result").textContent = `For Skill Level ${skillLevel}, the recommended food is: ${foodName} (${foodStats} | ${foodDuration})`;
-        }
-    </script>
-</body>
-
-
-<p> * Mostly lol
-</html>
+              if (skillLevel >= 0 && skillLevel <= 66) {
+                  if (!excludeLongDuration) {
+                      foodName = "Rarab Meatball";
+                      foodStats = "HP +10, Strength +2, Vitality +2, Intelligence -1 | Ranged Attack +30%, Attack +30%";
+                      foodDuration = "3 hours";
+                  } else {
+                      foodName = "Mutton Tortilla";
+                      foodStats = "MP +10, Strength +3, Vitality +1, Intelligence -1 | Attack +27% (Max. 30 @ 112 Base Attack), Ranged Attack +27% (Max. 30 @ 112 Base Ranged Attack)";
+                      foodDuration = "30 minutes";
+                  }
+              } else if (skillLevel >= 67 && skillLevel <= 112) {
+                  if (!excludeLongDuration) {
+                      foodName = "Navarin";
+                      foodStats = "HP +3% (Max. 130), Strength +3, Vitality +1, Agility +1, Intelligence -1 | Ranged Attack +27%, Attack +27%";
+                      foodDuration = "3 hours";
+                  } else {
+                      foodName = "Mutton Tortilla";
+                      foodStats = "MP +10, Strength +3, Vitality +1, Intelligence -1 | Attack +27% (Max. 30 @ 112 Base Attack), Ranged Attack +27% (Max. 30 @ 112 Base Ranged Attack)";
+                      foodDuration = "30 minutes";
+                  }
+              } else if (skillLevel >= 113 && skillLevel <= 185) {
+                  foodName = "Dhalmel Pie";
+                  foodStats = "HP +25, Strength +4, Vitality +1, Agility +2, Intelligence -2, Mind +1 | Ranged Attack +25%, Attack +25%";
+                  foodDuration = "30 minutes";
+              } else if (skillLevel >= 186 && skillLevel <= 272 && !excludeLongDuration) {
+                  foodName = "Boiled Cockatrice";
+                  foodStats = "Strength +5, Agility +2, Intelligence -2, Mind +1, Resist Petrify | Ranged Attack +22%, Attack +22%";
+                  foodDuration = "180 minutes";
+              } else if (skillLevel >= 185 && skillLevel <= 273) {
+                  foodName = "Rice Dumpling";
+                  foodStats = "HP +17, Strength +3, Vitality +2, Agility +1, Accuracy +5 | Attack +20%, Ranged Attack +30%, Resist Paralyze +4, HP Recovered While Healing +2, MP Recovered While Healing +2";
+                  foodDuration = "30 minutes";
+              } else if (skillLevel >= 273 && skillLevel <= 375) {
+                  foodName = "Coeurl Sub";
+                  foodStats = "MP +10,Strength +5, Agility +1, Intelligence -2, HP Regeneration While Healing +1, Resist Stun, Resist Sleep | Ranged Attack +20%, Attack +20%";
+                  foodDuration = "30 minutes";
+              } else {
+                  foodName = "Invalid Skill Level";
+              }
+              document.getElementById("food-result").textContent = `For Skill Level ${skillLevel}, the recommended food is: ${foodName} (${foodStats} | ${foodDuration})`;
+      }
+  </script>
+  </body>
+  <p> * Mostly lol
+  </html>
